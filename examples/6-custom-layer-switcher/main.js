@@ -2,6 +2,9 @@ import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import LayerGroup from 'ol/layer/Group';
 import ImageLayer from 'ol/layer/Image';
+import VectorImageLayer from 'ol/layer/VectorImage';
+import VectorLayer from 'ol/layer/Vector';
+import Heatmap from 'ol/layer/Heatmap';
 import OSM from 'ol/source/OSM';
 import BingMaps from 'ol/source/BingMaps';
 import XYZ from 'ol/source/XYZ';
@@ -10,11 +13,13 @@ import TileDebug from 'ol/source/TileDebug';
 import TileArcGISRest from 'ol/source/TileArcGISRest';
 import TileWMS from 'ol/source/TileWMS';
 import Static from 'ol/source/ImageStatic';
+import VectorSource from 'ol/source/Vector';
 import Attribution from 'ol/control/Attribution';
 import { defaults as defaultControls } from 'ol/control';
+import GeoJSON from 'ol/format/GeoJSON';
+import KML from 'ol/format/KML';
 
-
-function createBaseLayers() {
+function createBaseRasterLayers() {
   // Base Layers
   // Openstreet Map Standard
   const openstreetMapStandard = new TileLayer({
@@ -77,7 +82,7 @@ function createBaseLayers() {
   ];
 }
 
-function createLayers() {
+function createRaterLayers() {
   // TileDebug
   const tileDebugLayer = new TileLayer({
     source: new TileDebug(),
@@ -113,7 +118,7 @@ function createLayers() {
   // Static Image OpenstreetMap
   const openstreetMapFragmentStatic = new ImageLayer({
     source: new Static({
-      url: '/static_images/openlayers_static_humanitarian.PNG',
+      url: '/static/6-custom-layer-switcher/static_images/openlayers_static_humanitarian.PNG',
       imageExtent: [4991698.9328313675, 5050292.393744084, 10008191.828130603, 10013417.911357462],
       attributions: '<a href=https://www.openstreetmap.org/copyright/>© OpenStreetMap contributors<a/>',
     }),
@@ -121,6 +126,44 @@ function createLayers() {
   });
 
   return [tileArcGISLayer, NOAAWMSLayer, tileDebugLayer, openstreetMapFragmentStatic];
+}
+
+function createVectorLayers() {
+  // Vector Layers
+  // Central EU Countries GeoJSON VectorImage Layer
+  const EUCountriesGeoJSONVectorImage = new VectorImageLayer({
+    source: new VectorSource({
+      url: '/static/6-custom-layer-switcher/vector_data/Central_EU_countries_GEOJSON.geojson',
+      format: new GeoJSON()
+    }),
+    visible: false,
+    title: 'CentralEUCountriesGeoJSON'
+  });
+
+  // Central EU Countries KML
+  const EUCountriesKML = new VectorLayer({
+    source: new VectorSource({
+      url: '/static/6-custom-layer-switcher/vector_data/Central_EU_countries_KML.kml',
+      format: new KML()
+    }),
+    visible: false,
+    title: 'CentralEUCountriesKML'
+  });
+
+  // HeatMap
+  const heatMapOnlineFBUsers = new Heatmap({
+    source: new VectorSource({
+      url: '/static/6-custom-layer-switcher/vector_data/onlineFBUsers.geojson',
+      format: new GeoJSON()
+    }),
+    radius: 20,
+    blur: 12,
+    gradient: ['#DC143C', '#DC143C', '#000000', '#000000', '#000000'],
+    title: 'OnlineFBUsers',
+    visible: false
+  });
+
+  return [EUCountriesGeoJSONVectorImage, EUCountriesKML, heatMapOnlineFBUsers];
 }
 
 const attributionControl = new Attribution({
@@ -148,7 +191,7 @@ const map = createMap();
 
 // Layer Group
 const baseLayerGroup = new LayerGroup({
-  layers: createBaseLayers()
+  layers: createBaseRasterLayers()
 })
 map.addLayer(baseLayerGroup);
 
@@ -167,22 +210,37 @@ for (let baseLayerElement of baseLayerElements) {
 
 // Raster Tile Layer Group
 const rasterLayerGroup = new LayerGroup({
-  layers: createLayers()
+  layers: createRaterLayers()
 })
 map.addLayer(rasterLayerGroup);
 
-// Layer Switcher Logic for Raster Tile Layers
-const tileRasterLayerElements = document.querySelectorAll('.sidebar > input[type=checkbox]');
-for(let tileRasterLayerElement of tileRasterLayerElements){
-  tileRasterLayerElement.addEventListener('change', function() {
-    let tileRasterLayerElementValue = this.value;
-    let tileRasterLayer;
 
-    rasterLayerGroup.getLayers().forEach(function(layer, index, array){
-      if(tileRasterLayerElementValue === layer.get('title')){
-        tileRasterLayer = layer;
-      }
-    })
-    tileRasterLayer.setVisible(this.checked);
-  })
+// Layer Switcher Logic for Raster Tile Layers
+const tileRasterLayerElements = document.getElementsByName('rasterLayerCheckbox');
+checkboxLayerSwitcher(tileRasterLayerElements, rasterLayerGroup)
+
+// Vector Tile Layer Group
+const vectorLayerGroup = new LayerGroup({
+  layers: createVectorLayers()
+})
+map.addLayer(vectorLayerGroup);
+
+// Layer Switcher Logic for Vector Layers
+const tileVectorLayerElements = document.getElementsByName('vectorLayerCheckbox');
+checkboxLayerSwitcher(tileVectorLayerElements, vectorLayerGroup)
+
+function checkboxLayerSwitcher(checkboxes, layerGroup) {
+  for (let checkbox of checkboxes) {
+    checkbox.addEventListener('change', function() {
+      let tileVectorLayerElementValue = this.value;
+      let tileVectorLayer;
+
+      layerGroup.getLayers().forEach(function(layer, index, array) {
+        if(tileVectorLayerElementValue === layer.get('title')) {
+          tileVectorLayer = layer;
+        }
+      });
+      tileVectorLayer.setVisible(this.checked);
+    });
+  }
 }
