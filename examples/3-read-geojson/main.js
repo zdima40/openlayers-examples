@@ -10,7 +10,7 @@ async function main() {
   const json = await response.json();
 
   const vectorSource = new VectorSource({
-    features: new GeoJSON({ featureProjection: 'EPSG:3857' }).readFeatures(json),
+    features: new GeoJSON().readFeatures(json, { featureProjection: 'EPSG:3857' }),
   });
 
   const vectorLayer = new VectorLayer({
