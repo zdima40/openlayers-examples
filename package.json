@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "parcel examples/**/*.html",
+    "start": "parcel index.html examples/**/*.html",
     "build": "parcel build"
   },
   "keywords": [],
