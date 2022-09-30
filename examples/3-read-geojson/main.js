@@ -6,7 +6,7 @@ import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 
 async function main() {
-  const response = await fetch('/geojson.json')
+  const response = await fetch('/static/3-read-geojson/geojson.json')
   const json = await response.json();
 
   const vectorSource = new VectorSource({
@@ -16,7 +16,7 @@ async function main() {
   const vectorLayer = new VectorLayer({
     source: vectorSource,
   });
-  
+
   function createMap() {
     return new Map({
       target: 'map',
@@ -32,7 +32,7 @@ async function main() {
       }),
     })
   }
-  
+
   const map = createMap();
 }
 
