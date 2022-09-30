@@ -6,7 +6,7 @@ import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 
 async function main() {
-  const response = await fetch('/polygons.json')
+  const response = await fetch('/geojson.json')
   const json = await response.json();
 
   const vectorSource = new VectorSource({
@@ -27,7 +27,7 @@ async function main() {
         vectorLayer
       ],
       view: new View({
-        center: [0, 0],
+        center: [10000000, 5000000],
         zoom: 2
       }),
     })
