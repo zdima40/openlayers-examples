@@ -1,0 +1,34 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Openlayers</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="grid-container">
+    <div class="grid-1">
+      <div class="sidebar">
+        <h2>Base Layers</h2>
+        <input type="radio" name='baseLayerRadioButton' value='OSMStandard' checked>OSM Standard<br>
+        <input type="radio" name='baseLayerRadioButton' value='OSMHumanitarian'>OSM Humanitarian<br>
+        <input type="radio" name='baseLayerRadioButton' value='BingMaps'>Bing Maps<br>
+        <input type="radio" name='baseLayerRadioButton' value='CartoDarkAll'>Carto Dark All<br>
+        <input type="radio" name='baseLayerRadioButton' value='StamenTerrainWithLabels'>Stamen Terrain With Labels<br>
+        <input type="radio" name='baseLayerRadioButton' value='StamenTerrain'>Stamen Terrain<br>
+        
+        <h2>Layers</h2>
+        <input type="checkbox" name='rasterLayerCheckbox' value='TileArcGISLayer' checked>Tile ArcGIS Layer<br>
+        <input type="checkbox" name='rasterLayerCheckbox' value='NOAAWMSLayer' checked>NOAA WMS Layer<br>
+        <input type="checkbox" name='rasterLayerCheckbox' value='TileDebugLayer' checked>Tile Debug Layer<br>
+        <input type="checkbox" name='rasterLayerCheckbox' value='openstreetMapFragmentStatic' checked>OpenstreetMap Humanitarian Fragment Static<br>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div id='map' class='map'></div>
+    </div>
+  </div>
+  <script src="main.js" type="module"></script>
+</body>
+</html>
